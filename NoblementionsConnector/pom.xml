@@ -12,8 +12,8 @@
     </dependencies>
 
     <parent>
-        <groupId>Ieviz-Noblementions</groupId>
-        <artifactId>Ieviz-Noblementions</artifactId>
+        <groupId>Noblementions</groupId>
+        <artifactId>Noblementions</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 

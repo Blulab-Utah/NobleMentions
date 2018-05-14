@@ -48,52 +48,7 @@ public class NoblementionsConnectionController {
 
         LOGGER.debug("\nReading contents from Noblementions\n");
         String contents = FileUtils.readFileToString(new File(output + "\\RESULTS.tsv"));
-//        return Converters.tsvToCsv(contents);
 
-//        Scanner scanner = new Scanner(contentsToCsv);
-//        List<String> linesList = new ArrayList<>();
-//        while (scanner.hasNextLine()) {
-//            String line = scanner.nextLine();
-//            linesList.add(line);
-//
-//        }
-//
-//        scanner.close();
-//
-//        linesList.remove(0);
-//        DocumentIdentifierDao doc = new DocumentIdentifierDao();
-//        List<String> documentList = new ArrayList<>();
-//
-//
-//        for (String element : linesList) {
-//            List<String> objectList = Arrays.asList(element.split(",", -1));
-//            LOGGER.debug("\nObject Size: " + objectList.size());
-//
-//            String documentName = objectList.get(0);
-//            if (!documentList.contains(documentName)) {
-//                documentList.add(documentName);
-//                doc.setDocName(documentName);
-//                QueryUtility.insertDocumentId(doc);
-//            }
-//
-//            int id = QueryUtility.getID(documentName);
-//            if(objectList.size() == 8)
-//            {
-//                AnnotationResultsDao entity = new AnnotationResultsDao();
-//                entity.setDocumentId(id);
-//                entity.setDocumentType(objectList.get(1));
-//                entity.setId(objectList.get(2));
-//                entity.setAnnotationVariable(objectList.get(3));
-//                entity.setProperty(objectList.get(4));
-//                entity.setDocumentValue(objectList.get(5));
-//                entity.setValueProperties(objectList.get(6));
-//                entity.setAnnotations(objectList.get(7));
-//
-//                QueryUtility.insertAnnotataions(entity);
-//            }
-//        }
-//
-//
         String contentToJson = Converters.tsvToJson(contents);
 
         return new ModelAndView(jsonView, ServiceConstants.STATUS_FIELD, contentToJson);

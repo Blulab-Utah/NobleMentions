@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>Ieviz-Noblementions</groupId>
-        <artifactId>Ieviz-Noblementions</artifactId>
+        <groupId>Noblementions</groupId>
+        <artifactId>Noblementions</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>Ieviz-NoblementionsBuilder</artifactId>
+    <artifactId>NoblementionsBuilder</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <packaging>war</packaging>
@@ -19,7 +19,7 @@
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <context.path>Ieviz-NoblementionsWS</context.path>
+        <context.path>NoblementionsWS</context.path>
     </properties>
     <build>
         <resources>
