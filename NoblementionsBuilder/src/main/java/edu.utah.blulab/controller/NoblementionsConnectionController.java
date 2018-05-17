@@ -47,7 +47,7 @@ public class NoblementionsConnectionController {
         noblementionsConnector.processNobleMentions(pathMap);
 
         LOGGER.debug("\nReading contents from Noblementions\n");
-        String contents = FileUtils.readFileToString(new File(output + "\\RESULTS.tsv"));
+        String contents = FileUtils.readFileToString(new File(output + "/RESULTS.tsv"));
 
         String contentToJson = Converters.tsvToJson(contents);
 
