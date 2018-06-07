@@ -8,9 +8,9 @@ import java.util.Map;
 @Service
 public class NoblementionsConnector implements INoblementionsConnector {
     @Override
-    public void processNobleMentions(Map<String, String> pathMap) throws Exception {
+    public void processNobleMentions(Map<String, String> pathMap, String ontologyContent) throws Exception {
         NobleMentionsTool nobleMentionsTool = new NobleMentionsTool();
-        nobleMentionsTool.ievizProcess(pathMap);
+        nobleMentionsTool.ievizProcessWithOntologies(pathMap,ontologyContent);
 
     }
 }
