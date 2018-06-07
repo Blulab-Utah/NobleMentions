@@ -12,6 +12,9 @@ import edu.pitt.dbmi.nlp.noble.ontology.IOntologyException;
 import edu.pitt.dbmi.nlp.noble.tools.ConText;
 import edu.pitt.dbmi.nlp.noble.tools.TextTools;
 import edu.pitt.dbmi.nlp.noble.util.*;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -20,6 +23,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.PrintStream;
 import java.net.URL;
 import java.nio.file.Files;
@@ -37,6 +41,8 @@ import java.util.regex.Pattern;
  * @author tseytlin
  */
 public class NobleMentionsTool implements ActionListener {
+
+    private static Logger logger = Logger.getLogger(NobleMentionsTool.class);
     private final URL LOGO_ICON = getClass().getResource("/icons/NobleLogo256.png");
     private final URL CANCEL_ICON = getClass().getResource("/icons/cancel16.png");
     private JFrame frame;
@@ -66,11 +72,71 @@ public class NobleMentionsTool implements ActionListener {
     private JCheckBox ignoreLabels;
     private JRadioButton sectionScope, paragraphScope;
 
-
-    public void ievizProcess(Map<String,String> pathMap) throws Exception {
+    public void ievizProcessWithOntologies(Map<String, String> pathMap, String ontologyContent) throws Exception {
         statandlone = true;
         NobleMentionsTool nc = new NobleMentionsTool();
-        if (pathMap.size()==3) {
+        File ontologyFile = new File("ontologies.owl");
+        FileWriter fileWriter = new FileWriter(ontologyFile);
+        fileWriter.write(ontologyContent);
+        fileWriter.flush();
+        fileWriter.close();
+
+
+        if (pathMap.size() == 2) {
+
+            File input = new File(pathMap.get("input"));
+            File output = new File(pathMap.get("output"));
+            File properties = null;
+
+            //check if inputs exist
+            for (File a : Arrays.asList(ontologyFile, input, output)) {
+                if (!a.exists()) {
+                    logger.error("Error: file or directory " + a + " doesn't exist");
+                    System.exit(1);
+                }
+            }
+
+            // find ontology
+//            for (File f : ontologyFile.listFiles()) {
+//                if (f.getName().endsWith(".owl") && !ConText.IMPORTED_ONTOLOGIES.contains(FileTools.stripExtension(f.getName()))) {
+//                    ontologyFile = f;
+//                    break;
+//                } else if (f.getName().endsWith(".properties")) {
+//                    properties = f;
+//                }
+//            }
+            if (!ontologyFile.isFile()) {
+                logger.error("Error: could not find domain ontology in " + ontologyFile.getAbsolutePath());
+                System.exit(1);
+            }
+            nc.process(ontologyFile, input, output, null);
+            String dir = FilenameUtils.getFullPathNoEndSeparator(ontologyFile.getAbsolutePath());
+
+            FileUtils.deleteDirectory(new File(dir+".terminologies"));
+            FileUtils.forceDelete(ontologyFile);
+
+
+//            try {
+//                if (ontologyFile.delete()) {
+//                    logger.debug(ontologyFile.getName() + " is deleted!");
+//                } else {
+//                    logger.error("Delete operation is failed.");
+//                }
+//
+//            } catch (Exception e) {
+//
+//                logger.error(e.getMessage());
+//
+//            }
+
+        }
+    }
+
+
+    public void ievizProcess(Map<String, String> pathMap) throws Exception {
+        statandlone = true;
+        NobleMentionsTool nc = new NobleMentionsTool();
+        if (pathMap.size() == 3) {
             File ontology = new File(pathMap.get("ont"));
             File input = new File(pathMap.get("input"));
             File output = new File(pathMap.get("output"));
@@ -1126,7 +1192,6 @@ public class NobleMentionsTool implements ActionListener {
     /**
      * process report.
      *
-     * @param templates  the templates
      * @param reportFile the report lastFile
      * @throws Exception the exception
      */
