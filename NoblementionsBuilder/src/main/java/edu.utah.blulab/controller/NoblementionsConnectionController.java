@@ -8,14 +8,13 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,15 +31,63 @@ public class NoblementionsConnectionController {
 
     @RequestMapping(value = "/getAnnotations", method = RequestMethod.POST)
     @ResponseBody
-    public String getFeatures(@RequestHeader(value = "input") String input,
-                                    @RequestHeader(value = "output") String output,
-                                    @RequestHeader(value = "ont") String ontPath) throws Exception {
+    public String getFeatures(@RequestParam(value = "inputFile") MultipartFile[] inputFiles,
+                                    @RequestParam(value = "ontFile") MultipartFile[] ontologyFiles) throws Exception {
+
+        File inputFile = null;
+        for (MultipartFile file : inputFiles) {
+            if (!file.isEmpty()) {
+                if (file.getOriginalFilename().split("\\.")[1].equals("txt")) {
+                    inputFile = new File(file.getOriginalFilename());
+                    try {
+                        file.transferTo(inputFile);
+                    } catch (IOException e) {
+                        return e.getMessage();
+                    }
+                }
+            }
+        }
+
+        File ontologyFile = null;
+        for (MultipartFile file : ontologyFiles) {
+            if (!file.isEmpty()) {
+                if (file.getOriginalFilename().split("\\.")[1].equals("owl")) {
+                    ontologyFile = new File(file.getOriginalFilename());
+                    try {
+                        file.transferTo(ontologyFile);
+                    } catch (IOException e) {
+                        return e.getMessage();
+                    }
+                }
+            }
+        }
+
+        File inputDirectory = new File("C:\\temp\\noble\\input\\");
+        if (inputDirectory.exists())
+            FileUtils.forceDelete(inputDirectory);
+        inputDirectory.mkdirs();
+        assert inputFile != null;
+        FileUtils.copyFileToDirectory(inputFile,inputDirectory);
+
+        File ontDirectory = new File("C:\\temp\\noble\\ont\\");
+        if (ontDirectory.exists())
+            FileUtils.forceDelete(ontDirectory);
+        ontDirectory.mkdirs();
+        assert ontologyFile != null;
+        FileUtils.copyFileToDirectory(ontologyFile,ontDirectory);
+
+
+        File output = new File("C:\\temp\\noble\\output\\");
+        if (output.exists()){
+            FileUtils.forceDelete(output);
+        }
+        output.mkdirs();
 
 
         Map<String, String> pathMap = new HashMap<>();
-        pathMap.put("ont", ontPath);
-        pathMap.put("input", input);
-        pathMap.put("output", output);
+        pathMap.put("ont", ontDirectory.getAbsolutePath());
+        pathMap.put("input", inputDirectory.getAbsolutePath());
+        pathMap.put("output", output.getAbsolutePath());
 
         LOGGER.debug("\nSending request to Noblementions\n");
 

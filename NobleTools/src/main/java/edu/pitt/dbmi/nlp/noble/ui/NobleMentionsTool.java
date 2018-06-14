@@ -72,64 +72,33 @@ public class NobleMentionsTool implements ActionListener {
     private JCheckBox ignoreLabels;
     private JRadioButton sectionScope, paragraphScope;
 
-    public void ievizProcessWithOntologies(Map<String, String> pathMap, String ontologyContent) throws Exception {
+    public void ievizProcessOntologies(String ontologyFilename, String inputDir, String ontologyContent) throws Exception {
         statandlone = true;
+
         NobleMentionsTool nc = new NobleMentionsTool();
-        File ontologyFile = new File("ontologies.owl");
-        FileWriter fileWriter = new FileWriter(ontologyFile);
-        fileWriter.write(ontologyContent);
-        fileWriter.flush();
-        fileWriter.close();
+        File ontologyFile = new File("temp\\ontologies\\"+ontologyFilename);
 
+        FileUtils.writeStringToFile(ontologyFile,ontologyContent);
+        File input = new File(inputDir);
+        File output = new File("temp\\output\\");
 
-        if (pathMap.size() == 2) {
+        File properties = null;
 
-            File input = new File(pathMap.get("input"));
-            File output = new File(pathMap.get("output"));
-            File properties = null;
-
-            //check if inputs exist
-            for (File a : Arrays.asList(ontologyFile, input, output)) {
-                if (!a.exists()) {
-                    logger.error("Error: file or directory " + a + " doesn't exist");
-                    System.exit(1);
-                }
-            }
-
-            // find ontology
-//            for (File f : ontologyFile.listFiles()) {
-//                if (f.getName().endsWith(".owl") && !ConText.IMPORTED_ONTOLOGIES.contains(FileTools.stripExtension(f.getName()))) {
-//                    ontologyFile = f;
-//                    break;
-//                } else if (f.getName().endsWith(".properties")) {
-//                    properties = f;
-//                }
-//            }
-            if (!ontologyFile.isFile()) {
-                logger.error("Error: could not find domain ontology in " + ontologyFile.getAbsolutePath());
+        //check if inputs exist
+        for (File a : Arrays.asList(ontologyFile, input, output)) {
+            if (!a.exists()) {
+                System.err.println("Error: file or directory " + a + " doesn't exist");
                 System.exit(1);
             }
-            nc.process(ontologyFile, input, output, null);
-            String dir = FilenameUtils.getFullPathNoEndSeparator(ontologyFile.getAbsolutePath());
-
-            FileUtils.deleteDirectory(new File(dir+".terminologies"));
-            FileUtils.forceDelete(ontologyFile);
-
-
-//            try {
-//                if (ontologyFile.delete()) {
-//                    logger.debug(ontologyFile.getName() + " is deleted!");
-//                } else {
-//                    logger.error("Delete operation is failed.");
-//                }
-//
-//            } catch (Exception e) {
-//
-//                logger.error(e.getMessage());
-//
-//            }
-
         }
+
+        if (!ontologyFile.isFile()) {
+            System.err.println("Error: could not find domain ontologyFile in " + ontologyFile.getAbsolutePath());
+            System.exit(1);
+        }
+        nc.process(ontologyFile, input, output, properties);
+        FileUtils.forceDelete(ontologyFile);
+        FileUtils.forceDelete(output);
     }
 
 
