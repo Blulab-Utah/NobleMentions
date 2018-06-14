@@ -119,15 +119,15 @@ public class NobleMentionsTool implements ActionListener {
                 }
             }
 
-            // find ontology
-//            for (File f : ontology.listFiles()) {
-//                if (f.getName().endsWith(".owl") && !ConText.IMPORTED_ONTOLOGIES.contains(FileTools.stripExtension(f.getName()))) {
-//                    ontology = f;
-//                    break;
-//                } else if (f.getName().endsWith(".properties")) {
-//                    properties = f;
-//                }
-//            }
+//             find ontology
+            for (File f : ontology.listFiles()) {
+                if (f.getName().endsWith(".owl") && !ConText.IMPORTED_ONTOLOGIES.contains(FileTools.stripExtension(f.getName()))) {
+                    ontology = f;
+                    break;
+                } else if (f.getName().endsWith(".properties")) {
+                    properties = f;
+                }
+            }
             if (!ontology.isFile()) {
                 System.err.println("Error: could not find domain ontology in " + ontology.getAbsolutePath());
                 System.exit(1);
