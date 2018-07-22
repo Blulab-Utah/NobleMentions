@@ -62,14 +62,14 @@ public class NoblementionsConnectionController {
             }
         }
 
-        File inputDirectory = new File("C:\\temp\\noble\\input\\");
+        File inputDirectory = new File("\\home\\deep\\temp\\noble\\input\\");
         if (inputDirectory.exists())
             FileUtils.forceDelete(inputDirectory);
         inputDirectory.mkdirs();
         assert inputFile != null;
         FileUtils.copyFileToDirectory(inputFile,inputDirectory);
 
-        File ontDirectory = new File("C:\\temp\\noble\\ont\\");
+        File ontDirectory = new File("\\home\\deep\\temp\\noble\\ont\\");
         if (ontDirectory.exists())
             FileUtils.forceDelete(ontDirectory);
         ontDirectory.mkdirs();
@@ -77,12 +77,11 @@ public class NoblementionsConnectionController {
         FileUtils.copyFileToDirectory(ontologyFile,ontDirectory);
 
 
-        File output = new File("C:\\temp\\noble\\output\\");
+        File output = new File("\\home\\deep\\temp\\noble\\output\\");
         if (output.exists()){
             FileUtils.forceDelete(output);
         }
         output.mkdirs();
-
 
         Map<String, String> pathMap = new HashMap<>();
         pathMap.put("ont", ontDirectory.getAbsolutePath());
