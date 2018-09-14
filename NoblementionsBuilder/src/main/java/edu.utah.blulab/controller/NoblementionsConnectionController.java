@@ -82,7 +82,6 @@ public class NoblementionsConnectionController {
                     inputFile = new File(file.getOriginalFilename());
                     try {
                         file.transferTo(inputFile);
-                        
 
                         FileUtils.copyFileToDirectory(inputFile,inputDirectory);
                         pathMap.put("input", inputDirectory.getAbsolutePath());
@@ -94,6 +93,7 @@ public class NoblementionsConnectionController {
                         String contents = FileUtils.readFileToString(new File(output + "/RESULTS.tsv"));
                         contentList.add(contents);
                         pathMap.remove("input");
+                        FileUtils.cleanDirectory(inputDirectory);
 
                     } catch (IOException e) {
                         return null;
