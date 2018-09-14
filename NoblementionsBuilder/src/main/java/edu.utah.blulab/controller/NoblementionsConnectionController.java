@@ -58,11 +58,11 @@ public class NoblementionsConnectionController {
         assert ontologyFile != null;
         FileUtils.copyFileToDirectory(ontologyFile,ontDirectory);
 
-        File output = new File("\\home\\deep\\temp\\noble\\output\\");
-        if (output.exists()){
-            FileUtils.forceDelete(output);
+        File outputDirectory = new File("\\home\\deep\\temp\\noble\\output\\");
+        if (outputDirectory.exists()){
+            FileUtils.forceDelete(outputDirectory);
         }
-        output.mkdirs();
+        outputDirectory.mkdirs();
 
         File inputDirectory = new File("\\home\\deep\\temp\\noble\\input\\");
         if (inputDirectory.exists())
@@ -71,7 +71,7 @@ public class NoblementionsConnectionController {
 
         Map<String, String> pathMap = new HashMap<>();
         pathMap.put("ont", ontDirectory.getAbsolutePath());
-        pathMap.put("output", output.getAbsolutePath());
+        pathMap.put("output", outputDirectory.getAbsolutePath());
 
         List<String> contentList = new ArrayList<>();
 
@@ -82,18 +82,7 @@ public class NoblementionsConnectionController {
                     inputFile = new File(file.getOriginalFilename());
                     try {
                         file.transferTo(inputFile);
-
                         FileUtils.copyFileToDirectory(inputFile,inputDirectory);
-                        pathMap.put("input", inputDirectory.getAbsolutePath());
-                        LOGGER.debug("\nSending request to Noblementions\n");
-
-                        noblementionsConnector.processNobleMentions(pathMap);
-
-                        LOGGER.debug("\nReading contents from Noblementions\n");
-                        String contents = FileUtils.readFileToString(new File(output + "/RESULTS.tsv"));
-                        contentList.add(contents);
-                        pathMap.remove("input");
-                        FileUtils.cleanDirectory(inputDirectory);
 
                     } catch (IOException e) {
                         return null;
@@ -101,6 +90,17 @@ public class NoblementionsConnectionController {
                 }
             }
         }
+        pathMap.put("input", inputDirectory.getAbsolutePath());
+        LOGGER.debug("\nSending request to Noblementions\n");
+
+        noblementionsConnector.processNobleMentions(pathMap);
+
+        LOGGER.debug("\nReading contents from Noblementions\n");
+        String contents = FileUtils.readFileToString(new File(outputDirectory + "/RESULTS.tsv"));
+        contentList.add(contents);
+        FileUtils.cleanDirectory(inputDirectory);
+        FileUtils.cleanDirectory(outputDirectory);
+        FileUtils.cleanDirectory(ontDirectory);
         return contentList;
     }
 }
