@@ -91,10 +91,16 @@ public class NoblementionsConnectionController {
 
         LOGGER.debug("\nSending request to Noblementions\n");
 
-        noblementionsConnector.processNobleMentions(pathMap);
+        try{
+            noblementionsConnector.processNobleMentions(pathMap);
+        }
+        catch (Exception e)
+        {
+            return e.getMessage();
+        }
 
         LOGGER.debug("\nReading contents from Noblementions\n");
-        String contents = FileUtils.readFileToString(new File(output + "/RESULTS.tsv"));
+        String contents = FileUtils.readFileToString(new File(output + "RESULTS.tsv"));
 
         return Converters.tsvToCsv(contents);
     }
