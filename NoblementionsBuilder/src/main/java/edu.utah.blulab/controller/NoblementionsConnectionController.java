@@ -31,14 +31,16 @@ public class NoblementionsConnectionController {
 
     @RequestMapping(value = "/getAnnotations", method = RequestMethod.POST)
     @ResponseBody
-    public String getFeatures(@RequestParam(value = "inputFile") MultipartFile[] inputFiles,
-                              @RequestParam(value = "ontFile") MultipartFile[] ontologyFiles) throws Exception {
+    public String getFeatures(@RequestParam(value = "ontFile") MultipartFile[] ontologyFiles,
+                              @RequestParam(value = "ip") MultipartFile[] inputFiles) throws Exception {
 
         File inputFile = null;
-        File inputDirectory = new File("\\home\\deep\\temp\\noble\\input\\");
+//        File inputDirectory = new File("\\home\\deep\\temp\\noble\\input\\");
+        File inputDirectory = new File("C:\\Users\\Deep\\temp\\input\\");
         if (inputDirectory.exists())
-            FileUtils.forceDelete(inputDirectory);
-        inputDirectory.mkdirs();
+            FileUtils.cleanDirectory(inputDirectory);
+        else
+            inputDirectory.mkdirs();
         for (MultipartFile file : inputFiles) {
             if (!file.isEmpty()) {
                 if (file.getOriginalFilename().split("\\.")[1].equals("txt")) {
@@ -54,6 +56,13 @@ public class NoblementionsConnectionController {
             }
         }
 
+
+        //File ontDirectory = new File("\\home\\deep\\temp\\noble\\ont\\");
+        File ontDirectory = new File("C:\\Users\\Deep\\temp\\ontologies\\");
+        if (ontDirectory.exists())
+            FileUtils.cleanDirectory(ontDirectory);
+        else
+            ontDirectory.mkdirs();
         File ontologyFile = null;
         for (MultipartFile file : ontologyFiles) {
             if (!file.isEmpty()) {
@@ -61,6 +70,7 @@ public class NoblementionsConnectionController {
                     ontologyFile = new File(file.getOriginalFilename());
                     try {
                         file.transferTo(ontologyFile);
+                        FileUtils.copyFileToDirectory(ontologyFile,ontDirectory);
                     } catch (IOException e) {
                         return e.getMessage();
                     }
@@ -68,26 +78,18 @@ public class NoblementionsConnectionController {
             }
         }
 
-
-
-        File ontDirectory = new File("\\home\\deep\\temp\\noble\\ont\\");
-        if (ontDirectory.exists())
-            FileUtils.forceDelete(ontDirectory);
-        ontDirectory.mkdirs();
-        assert ontologyFile != null;
-        FileUtils.copyFileToDirectory(ontologyFile,ontDirectory);
-
-
-        File output = new File("\\home\\deep\\temp\\noble\\output\\");
-        if (output.exists()){
-            FileUtils.forceDelete(output);
+//        File output = new File("\\home\\deep\\temp\\noble\\output\\");
+        File outputDirectory = new File("C:\\Users\\Deep\\temp\\output\\");
+        if (outputDirectory.exists()){
+            FileUtils.cleanDirectory(outputDirectory);
         }
-        output.mkdirs();
+        else
+            outputDirectory.mkdirs();
 
         Map<String, String> pathMap = new HashMap<>();
         pathMap.put("ont", ontDirectory.getAbsolutePath());
         pathMap.put("input", inputDirectory.getAbsolutePath());
-        pathMap.put("output", output.getAbsolutePath());
+        pathMap.put("output", outputDirectory.getAbsolutePath());
 
         LOGGER.debug("\nSending request to Noblementions\n");
 
@@ -100,8 +102,11 @@ public class NoblementionsConnectionController {
         }
 
         LOGGER.debug("\nReading contents from Noblementions\n");
-        String contents = FileUtils.readFileToString(new File(output + "RESULTS.tsv"));
+        String contents = FileUtils.readFileToString(new File(outputDirectory + "/RESULTS.tsv"));
 
+//        FileUtils.forceDelete(inputDirectory);
+//        FileUtils.forceDelete(outputDirectory);
+//        FileUtils.forceDelete(ontDirectory);
         return Converters.tsvToCsv(contents);
     }
 }
